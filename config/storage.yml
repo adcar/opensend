@@ -1,0 +1,14 @@
+# Local disk storage for development
+local:
+  service: Disk
+  root: <%= Rails.root.join("storage") %>
+
+# Vercel Blob Storage (S3-compatible)
+vercel:
+  service: S3
+  access_key_id: <%= ENV["VERCEL_BLOB_ACCESS_KEY"] %>
+  secret_access_key: <%= ENV["VERCEL_BLOB_SECRET_KEY"] %>
+  region: auto
+  bucket: <%= ENV["VERCEL_BLOB_BUCKET"] %>
+  endpoint: <%= ENV["VERCEL_BLOB_ENDPOINT"] %>
+
