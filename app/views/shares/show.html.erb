@@ -1,0 +1,63 @@
+<% preview_url = preview_share_url(token: @share_link.token) %>
+
+<div class="share-page">
+  <div class="share-header-bar">
+    <div class="share-file-info">
+      <div class="file-icon">
+        <%= render "shared/file_icon", document: @document %>
+      </div>
+      <div>
+        <h1 class="share-filename"><%= @document.filename %></h1>
+        <p class="share-filemeta"><%= @document.human_file_size %></p>
+      </div>
+    </div>
+    
+    <div class="share-actions-bar">
+      <% if @share_link.allow_download %>
+        <%= link_to download_share_path(token: @share_link.token), class: "btn btn-primary" do %>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2V8M7 8L4.5 5.5M7 8L9.5 5.5" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 10V11.5C2 11.7761 2.22386 12 2.5 12H11.5C11.7761 12 12 11.7761 12 11.5V10" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/></svg>
+          Download
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="share-preview-area">
+    <% if @preview_service.previewable? %>
+      <% 
+        text_content = @preview_service.text_content if [:text, :code].include?(@preview_service.viewer)
+        csv_rows = @preview_service.csv_rows if @preview_service.viewer == :spreadsheet
+        syntax_language = @preview_service.syntax_language if @preview_service.viewer == :code
+      %>
+      <%= render @preview_service.viewer_partial, 
+                 document: @document, 
+                 preview_url: preview_url,
+                 text_content: text_content,
+                 csv_rows: csv_rows,
+                 syntax_language: syntax_language %>
+    <% else %>
+      <%= render "previews/no_preview", document: @document %>
+    <% end %>
+  </div>
+
+  <% if @share_link.expires_at.present? && @share_link.active? %>
+    <p class="share-expires-notice">This link expires in <%= time_ago_in_words(@share_link.expires_at) %></p>
+  <% end %>
+
+  <div class="share-footer">
+    <a href="/">Shared with OpenSend</a>
+  </div>
+</div>
+
+<script>
+function toggleFullscreen() {
+  const frame = document.getElementById('preview-frame');
+  if (!document.fullscreenElement) {
+    frame.requestFullscreen().catch(err => {
+      console.log('Fullscreen error:', err);
+    });
+  } else {
+    document.exitFullscreen();
+  }
+}
+</script>
