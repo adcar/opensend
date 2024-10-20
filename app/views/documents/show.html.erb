@@ -1,0 +1,194 @@
+<div class="file-page">
+  <a href="<%= root_path %>" class="back-link">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 4L6 8L10 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Upload another file
+  </a>
+
+  <div class="file-card">
+    <div class="file-header">
+      <div class="file-icon large">
+        <%= render "shared/file_icon", document: @document %>
+      </div>
+      <div class="file-info">
+        <h1 class="file-name"><%= @document.filename %></h1>
+        <p class="file-meta"><%= @document.human_file_size %> · Uploaded <%= time_ago_in_words(@document.created_at) %> ago</p>
+      </div>
+      <div class="file-actions">
+        <%= link_to download_document_path(@document), class: "btn btn-secondary btn-sm" do %>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2V8M7 8L4.5 5.5M7 8L9.5 5.5" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 10V11.5C2 11.7761 2.22386 12 2.5 12H11.5C11.7761 12 12 11.7761 12 11.5V10" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/></svg>
+          Download
+        <% end %>
+        <%= button_to document_path(@document), method: :delete, class: "btn btn-secondary btn-sm", data: { turbo_confirm: "Delete this file?" } do %>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 4H11.5M5 4V3C5 2.44772 5.44772 2 6 2H8C8.55228 2 9 2.44772 9 3V4M10.5 4V11C10.5 11.5523 10.0523 12 9.5 12H4.5C3.94772 12 3.5 11.5523 3.5 11V4H10.5Z" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="share-section">
+    <div class="link-box">
+      <label>Share Link</label>
+      <div class="link-input-group">
+        <input type="text" readonly value="<%= share_url(token: @share_link.token) %>" id="share-url" class="link-input">
+        <button type="button" class="btn btn-primary" onclick="copyLink()">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="4.5" y="4.5" width="7" height="7" rx="1" stroke="currentColor" stroke-width="1.25"/><path d="M9.5 4.5V3C9.5 2.44772 9.05228 2 8.5 2H3C2.44772 2 2 2.44772 2 3V8.5C2 9.05228 2.44772 9.5 3 9.5H4.5" stroke="currentColor" stroke-width="1.25"/></svg>
+          <span id="copy-text">Copy</span>
+        </button>
+      </div>
+      <div class="link-stats">
+        <span><%= @share_link.view_count %> views</span>
+        <span><%= @share_link.download_count %> downloads</span>
+      </div>
+    </div>
+
+    <%= form_with model: @share_link, url: document_path(@document), method: :patch, local: true, class: "settings-form", id: "settings-form" do |f| %>
+      
+      <div class="settings-section">
+        <h3>Protection</h3>
+        
+        <div class="setting-row">
+          <label class="toggle-label">
+            <%= f.check_box :allow_download, class: "toggle-input", id: "allow_download", checked: @share_link.allow_download %>
+            <span class="toggle-switch"></span>
+            <span class="toggle-text">Allow downloading</span>
+          </label>
+        </div>
+        
+        <div class="setting-row password-row">
+          <label for="passcode">Password</label>
+          <div class="password-input-group">
+            <%= f.password_field :passcode, class: "form-input", placeholder: @share_link.passcode_protected? ? "••••••••" : "No password", id: "passcode" %>
+            <% if @share_link.passcode_protected? %>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="clearPassword()">Remove</button>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <details class="advanced-section">
+        <summary>Advanced Options</summary>
+        
+        <div class="settings-section">
+          <div class="setting-row">
+            <label for="expires_at">Expiration Date <span class="required">*</span></label>
+            <p class="setting-hint">Maximum: 30 days from today</p>
+            <div class="expiry-picker">
+              <%= f.date_field :expires_at, 
+                  class: "form-input", 
+                  id: "expires_at", 
+                  value: @share_link.expires_at&.to_date,
+                  min: Date.tomorrow.to_s,
+                  max: (Date.today + 30.days).to_s,
+                  required: true %>
+              <div class="expiry-shortcuts">
+                <button type="button" class="chip" onclick="setExpiry(1)">1 day</button>
+                <button type="button" class="chip" onclick="setExpiry(7)">1 week</button>
+                <button type="button" class="chip" onclick="setExpiry(30)">30 days</button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="setting-row">
+            <label for="max_views">Max Views</label>
+            <p class="setting-hint">Leave empty for unlimited views</p>
+            <%= f.number_field :max_views, class: "form-input", id: "max_views", min: 1, placeholder: "Unlimited" %>
+            <% if @share_link.max_views.present? %>
+              <p class="setting-hint"><%= @share_link.view_count %> / <%= @share_link.max_views %> views used</p>
+            <% end %>
+          </div>
+          
+          <div class="setting-row">
+            <label for="max_downloads">Max Downloads</label>
+            <p class="setting-hint">Leave empty for unlimited downloads</p>
+            <%= f.number_field :max_downloads, class: "form-input", id: "max_downloads", min: 1, placeholder: "Unlimited" %>
+            <% if @share_link.max_downloads.present? %>
+              <p class="setting-hint"><%= @share_link.download_count %> / <%= @share_link.max_downloads %> downloads used</p>
+            <% end %>
+          </div>
+          
+          <div class="setting-row">
+            <label>Restrict by Country</label>
+            <p class="setting-hint">Only allow access from specific countries</p>
+            <div class="country-select">
+              <select id="country-mode" onchange="toggleCountryMode()">
+                <option value="none" <%= 'selected' unless @share_link.country_restricted? %>>No restrictions</option>
+                <option value="allow" <%= 'selected' if @share_link.allowed_countries.present? %>>Only allow these countries</option>
+                <option value="block" <%= 'selected' if @share_link.blocked_countries.present? %>>Block these countries</option>
+              </select>
+              
+              <div id="country-list" class="country-list" style="<%= 'display:none' unless @share_link.country_restricted? %>">
+                <% ShareLink::COUNTRIES.each do |code, name| %>
+                  <label class="country-chip">
+                    <input type="checkbox" 
+                           name="share_link[allowed_countries][]" 
+                           value="<%= code %>"
+                           class="country-checkbox allowed-country"
+                           <%= 'checked' if @share_link.allowed_countries.include?(code) %>>
+                    <input type="checkbox" 
+                           name="share_link[blocked_countries][]" 
+                           value="<%= code %>"
+                           class="country-checkbox blocked-country"
+                           style="display:none"
+                           <%= 'checked' if @share_link.blocked_countries.include?(code) %>>
+                    <span><%= name %></span>
+                  </label>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <div class="form-actions">
+        <%= f.submit "Save Settings", class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script>
+function copyLink() {
+  const input = document.getElementById('share-url');
+  input.select();
+  document.execCommand('copy');
+  document.getElementById('copy-text').textContent = 'Copied!';
+  setTimeout(() => document.getElementById('copy-text').textContent = 'Copy', 2000);
+}
+
+function setExpiry(days) {
+  const input = document.getElementById('expires_at');
+  const maxDays = 30;
+  const actualDays = Math.min(days, maxDays);
+  const date = new Date();
+  date.setDate(date.getDate() + actualDays);
+  input.value = date.toISOString().slice(0, 10);
+}
+
+function clearPassword() {
+  document.getElementById('passcode').value = '';
+  document.getElementById('passcode').placeholder = 'No password';
+}
+
+function toggleCountryMode() {
+  const mode = document.getElementById('country-mode').value;
+  const list = document.getElementById('country-list');
+  const allowedInputs = document.querySelectorAll('.allowed-country');
+  const blockedInputs = document.querySelectorAll('.blocked-country');
+  
+  if (mode === 'none') {
+    list.style.display = 'none';
+    allowedInputs.forEach(i => { i.checked = false; i.style.display = 'none'; });
+    blockedInputs.forEach(i => { i.checked = false; i.style.display = 'none'; });
+  } else if (mode === 'allow') {
+    list.style.display = 'flex';
+    allowedInputs.forEach(i => i.style.display = '');
+    blockedInputs.forEach(i => { i.checked = false; i.style.display = 'none'; });
+  } else {
+    list.style.display = 'flex';
+    blockedInputs.forEach(i => i.style.display = '');
+    allowedInputs.forEach(i => { i.checked = false; i.style.display = 'none'; });
+  }
+}
+
+document.addEventListener('DOMContentLoaded', toggleCountryMode);
+</script>
