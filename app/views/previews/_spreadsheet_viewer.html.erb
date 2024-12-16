@@ -1,0 +1,36 @@
+<div class="preview-container spreadsheet-preview">
+  <div class="preview-toolbar">
+    <span class="preview-filename"><%= document.filename %></span>
+    <span class="preview-info"><%= csv_rows&.size || 0 %> rows</span>
+    <button type="button" class="preview-btn" onclick="toggleFullscreen()" title="Fullscreen">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 5V2H5M11 2H14V5M14 11V14H11M5 14H2V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+  <div class="preview-frame" id="preview-frame">
+    <% if csv_rows.present? %>
+      <div class="table-wrapper">
+        <table class="spreadsheet-table">
+          <thead>
+            <tr>
+              <% csv_rows.first&.each_with_index do |cell, i| %>
+                <th><%= cell.presence || "Column #{i + 1}" %></th>
+              <% end %>
+            </tr>
+          </thead>
+          <tbody>
+            <% csv_rows.drop(1).each do |row| %>
+              <tr>
+                <% row.each do |cell| %>
+                  <td><%= cell %></td>
+                <% end %>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <p class="preview-error">Unable to parse spreadsheet</p>
+    <% end %>
+  </div>
+</div>
+
