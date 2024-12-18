@@ -1,0 +1,80 @@
+<div class="preview-container office-preview">
+  <div class="preview-toolbar">
+    <span class="preview-filename"><%= document.filename %></span>
+    <button type="button" class="preview-btn" onclick="toggleFullscreen()" title="Fullscreen">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 5V2H5M11 2H14V5M14 11V14H11M5 14H2V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+  <div class="preview-frame" id="preview-frame">
+    <div id="office-content" class="office-content">
+      <div class="loading-spinner">Loading document...</div>
+    </div>
+  </div>
+</div>
+
+<% ext = document.file_extension.downcase %>
+
+<% if %w[doc docx].include?(ext) %>
+  <!-- Mammoth.js for Word documents -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+  <script>
+    fetch('<%= preview_url %>')
+      .then(response => response.arrayBuffer())
+      .then(arrayBuffer => {
+        mammoth.convertToHtml({ arrayBuffer: arrayBuffer })
+          .then(result => {
+            document.getElementById('office-content').innerHTML = 
+              '<div class="docx-content">' + result.value + '</div>';
+          })
+          .catch(err => {
+            document.getElementById('office-content').innerHTML = 
+              '<p class="preview-error">Unable to render document: ' + err.message + '</p>';
+          });
+      })
+      .catch(err => {
+        document.getElementById('office-content').innerHTML = 
+          '<p class="preview-error">Failed to load document</p>';
+      });
+  </script>
+<% elsif %w[xls xlsx].include?(ext) %>
+  <!-- SheetJS for Excel documents -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script>
+    fetch('<%= preview_url %>')
+      .then(response => response.arrayBuffer())
+      .then(arrayBuffer => {
+        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const html = XLSX.utils.sheet_to_html(firstSheet, { editable: false });
+        document.getElementById('office-content').innerHTML = 
+          '<div class="xlsx-content">' + html + '</div>';
+      })
+      .catch(err => {
+        document.getElementById('office-content').innerHTML = 
+          '<p class="preview-error">Failed to load spreadsheet</p>';
+      });
+  </script>
+<% elsif %w[ppt pptx odt ods odp].include?(ext) %>
+  <!-- PowerPoint/OpenDocument - show message since there's no good client-side library -->
+  <script>
+    const fileType = {
+      'ppt': 'PowerPoint',
+      'pptx': 'PowerPoint', 
+      'odt': 'OpenDocument Text',
+      'ods': 'OpenDocument Spreadsheet',
+      'odp': 'OpenDocument Presentation'
+    }['<%= ext %>'] || 'This file';
+    
+    document.getElementById('office-content').innerHTML = 
+      '<div class="no-preview-content">' +
+        '<p class="no-preview-text">' + fileType + ' preview not available</p>' +
+        '<p class="no-preview-hint"><%= document.filename %> · <%= document.human_file_size %></p>' +
+        '<p class="no-preview-hint" style="margin-top: 1rem;">Download the file to view it</p>' +
+      '</div>';
+  </script>
+<% else %>
+  <script>
+    document.getElementById('office-content').innerHTML = 
+      '<p class="preview-error">Preview not available for this file type</p>';
+  </script>
+<% end %>
