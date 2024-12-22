@@ -1,0 +1,9 @@
+#!/bin/bash
+set -e
+
+echo "==> Running database migrations..."
+bundle exec rails db:prepare
+
+echo "==> Database ready! Starting Puma server..."
+exec bundle exec puma -C config/puma.rb
+
