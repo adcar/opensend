@@ -1,0 +1,15 @@
+# Development-specific dockerignore
+# This file is used when building Dockerfile.dev
+
+# Ignore git directory
+/.git/
+
+# Ignore production files
+/Dockerfile
+/docker-compose.prod.yml
+
+# Keep these for development
+# /storage/
+# /tmp/
+# /log/
+
