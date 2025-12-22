@@ -22,7 +22,7 @@ gem "activestorage"
 gem "dotenv-rails", groups: [:development, :test]
 
 # JSON Web Tokens for secure links
-gem "jwt", "~> 2.7"
+gem "jwt", "~> 3.1"
 
 group :development, :test do
   gem "debug", platforms: %i[mri windows]
