@@ -1,0 +1,23 @@
+<div class="share-view">
+  <div class="share-card auth-card">
+    <div class="auth-icon">
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="8" y="12" width="32" height="24" rx="3" stroke="#5F6368" stroke-width="2"/>
+        <path d="M8 16L24 28L40 16" stroke="#5F6368" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    
+    <h1 class="auth-title">Email Required</h1>
+    <p class="auth-subtitle">Enter your email to access this file</p>
+    
+    <%= form_tag request_access_share_path(token: @share_link.token), method: :post, class: "auth-form" do %>
+      <div class="form-group">
+        <input type="email" name="email" placeholder="you@example.com" class="form-input form-input-lg" required autofocus>
+      </div>
+      
+      <button type="submit" class="btn btn-primary btn-lg btn-block">Continue</button>
+    <% end %>
+    
+    <p class="auth-privacy">Your email will be shared with the file owner</p>
+  </div>
+</div>

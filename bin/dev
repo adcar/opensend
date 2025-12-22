@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+# Start Docker services if not running
+if ! docker-compose ps | grep -q "opensend_postgres"; then
+  echo "Starting Docker services..."
+  docker-compose up -d
+  sleep 3
+fi
+
+# Run the Rails server
+exec bin/rails server -p 5000
+

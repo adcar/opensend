@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenSend - Secure File Sharing</title>
+  <meta name="description" content="Share files securely with granular permissions.">
+  
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <a href="/" class="logo">OpenSend</a>
+      
+      <nav class="app-nav">
+        <% if current_documents.any? %>
+          <span class="doc-count"><%= current_documents.count %> file<%= current_documents.count == 1 ? '' : 's' %></span>
+        <% end %>
+      </nav>
+    </header>
+    
+    <main class="app-main">
+      <% if flash[:notice] %>
+        <div class="flash flash-notice"><%= flash[:notice] %></div>
+      <% end %>
+      <% if flash[:alert] %>
+        <div class="flash flash-alert"><%= flash[:alert] %></div>
+      <% end %>
+      
+      <%= yield %>
+    </main>
+    
+    <footer class="app-footer">
+      <p>OpenSend · Open source file sharing</p>
+    </footer>
+  </div>
+</body>
+</html>

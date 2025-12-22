@@ -1,0 +1,23 @@
+<div class="share-view">
+  <div class="share-card auth-card">
+    <div class="auth-icon">
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="12" y="20" width="24" height="18" rx="3" stroke="#5F6368" stroke-width="2"/>
+        <path d="M18 20V15C18 11.6863 20.6863 9 24 9C27.3137 9 30 11.6863 30 15V20" stroke="#5F6368" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="24" cy="29" r="2" fill="#5F6368"/>
+        <path d="M24 31V34" stroke="#5F6368" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    
+    <h1 class="auth-title">Protected File</h1>
+    <p class="auth-subtitle">Enter the passcode to access this file</p>
+    
+    <%= form_tag verify_share_path(token: @share_link.token), method: :post, class: "auth-form" do %>
+      <div class="form-group">
+        <input type="password" name="passcode" placeholder="Passcode" class="form-input form-input-lg" required autofocus>
+      </div>
+      
+      <button type="submit" class="btn btn-primary btn-lg btn-block">Unlock</button>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+<%
+  ext = document.file_extension.downcase
+  
+  icon_colors = {
+    'pdf' => '#EA4335',
+    'doc' => '#4285F4',
+    'docx' => '#4285F4',
+    'xls' => '#34A853',
+    'xlsx' => '#34A853',
+    'ppt' => '#FBBC04',
+    'pptx' => '#FBBC04',
+    'zip' => '#5F6368',
+    'rar' => '#5F6368',
+    'jpg' => '#EA4335',
+    'jpeg' => '#EA4335',
+    'png' => '#EA4335',
+    'gif' => '#EA4335',
+    'svg' => '#EA4335',
+    'mp4' => '#9334E6',
+    'mov' => '#9334E6',
+    'mp3' => '#1A73E8',
+    'wav' => '#1A73E8',
+    'js' => '#F9AB00',
+    'ts' => '#4285F4',
+    'rb' => '#EA4335',
+    'py' => '#34A853',
+    'txt' => '#5F6368',
+    'md' => '#5F6368',
+    'json' => '#F9AB00'
+  }
+  
+  color = icon_colors[ext] || '#5F6368'
+  display_ext = ext.upcase.truncate(4, omission: '')
+%>
+
+<div class="file-icon" style="--icon-color: <%= color %>">
+  <svg width="40" height="48" viewBox="0 0 40 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 4C4 1.79086 5.79086 0 8 0H26L36 10V44C36 46.2091 34.2091 48 32 48H8C5.79086 48 4 46.2091 4 44V4Z" fill="#F1F3F4"/>
+    <path d="M26 0L36 10H30C27.7909 10 26 8.20914 26 6V0Z" fill="#DADCE0"/>
+    <path d="M8 0H26V6C26 8.20914 27.7909 10 30 10H36V44C36 46.2091 34.2091 48 32 48H8C5.79086 48 4 46.2091 4 44V4C4 1.79086 5.79086 0 8 0Z" stroke="#DADCE0" stroke-width="1"/>
+  </svg>
+  <span class="file-ext" style="color: <%= color %>"><%= display_ext %></span>
+</div>

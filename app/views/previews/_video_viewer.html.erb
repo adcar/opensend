@@ -1,0 +1,15 @@
+<div class="preview-container video-preview">
+  <div class="preview-toolbar">
+    <span class="preview-filename"><%= document.filename %></span>
+    <button type="button" class="preview-btn" onclick="toggleFullscreen()" title="Fullscreen">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 5V2H5M11 2H14V5M14 11V14H11M5 14H2V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+  <div class="preview-frame" id="preview-frame">
+    <video controls class="preview-video">
+      <source src="<%= preview_url %>" type="<%= document.content_type %>">
+      Your browser does not support video playback.
+    </video>
+  </div>
+</div>
+

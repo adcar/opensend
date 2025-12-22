@@ -1,0 +1,15 @@
+<div class="preview-container audio-preview">
+  <div class="preview-toolbar">
+    <span class="preview-filename"><%= document.filename %></span>
+  </div>
+  <div class="preview-frame audio-frame">
+    <div class="audio-icon">
+      <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="28" stroke="currentColor" stroke-width="2"/><path d="M26 24V40L42 32L26 24Z" fill="currentColor"/></svg>
+    </div>
+    <audio controls class="preview-audio">
+      <source src="<%= preview_url %>" type="<%= document.content_type %>">
+      Your browser does not support audio playback.
+    </audio>
+  </div>
+</div>
+

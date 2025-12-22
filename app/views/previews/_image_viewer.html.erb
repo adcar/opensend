@@ -1,0 +1,35 @@
+<div class="preview-container image-preview">
+  <div class="preview-toolbar">
+    <span class="preview-filename"><%= document.filename %></span>
+    <div class="preview-actions">
+      <button type="button" class="preview-btn" onclick="zoomOut()" title="Zoom out">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M5 7H9M11 11L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <button type="button" class="preview-btn" onclick="zoomIn()" title="Zoom in">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M5 7H9M7 5V9M11 11L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <button type="button" class="preview-btn" onclick="toggleFullscreen()" title="Fullscreen">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 5V2H5M11 2H14V5M14 11V14H11M5 14H2V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="preview-frame" id="preview-frame">
+    <img src="<%= preview_url %>" alt="<%= document.filename %>" class="preview-image" id="preview-image">
+  </div>
+</div>
+
+<script>
+let currentZoom = 1;
+const image = document.getElementById('preview-image');
+
+function zoomIn() {
+  currentZoom = Math.min(currentZoom + 0.25, 3);
+  image.style.transform = `scale(${currentZoom})`;
+}
+
+function zoomOut() {
+  currentZoom = Math.max(currentZoom - 0.25, 0.5);
+  image.style.transform = `scale(${currentZoom})`;
+}
+</script>
+
