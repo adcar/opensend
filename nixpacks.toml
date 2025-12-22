@@ -1,0 +1,13 @@
+# Nixpacks configuration for Railway
+[phases.setup]
+nixPkgs = ["ruby_3_3", "postgresql"]
+
+[phases.install]
+cmds = ["bundle install"]
+
+[phases.build]
+cmds = ["bundle exec rails assets:precompile"]
+
+[start]
+cmd = "bundle exec rails db:migrate && bundle exec puma -C config/puma.rb"
+

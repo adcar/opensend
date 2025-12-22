@@ -6,17 +6,22 @@ Rails.application.configure do
   config.consider_all_requests_local = false
   config.action_controller.perform_caching = true
 
-  config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present?
+  # Serve static files from public folder
+  config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present? || true
 
+  # Asset pipeline
   config.assets.compile = true
   config.assets.digest = true
 
+  # Active Storage - use local for now (can switch to S3, GCS, etc.)
   config.active_storage.service = :local
 
+  # Force SSL in production
   config.assume_ssl = true
   config.force_ssl = true
   config.ssl_options = { redirect: { exclude: -> request { request.path == "/up" } } }
 
+  # Logging
   config.log_tags = [:request_id]
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
 
@@ -32,8 +37,8 @@ Rails.application.configure do
   config.active_support.report_deprecations = false
   config.active_record.dump_schema_after_migration = false
 
-  # Set host for URL generation
-  config.action_controller.default_url_options = { host: ENV.fetch("APP_HOST", "opensend.vercel.app") }
+  # Set hosts - allow all for now (configure properly in production)
+  config.hosts.clear
   
   # Secret key base from environment
   config.secret_key_base = ENV.fetch("SECRET_KEY_BASE") { SecureRandom.hex(64) }
