@@ -26,7 +26,7 @@ gem "jwt", "~> 2.7"
 
 group :development, :test do
   gem "debug", platforms: %i[mri windows]
-  gem "rspec-rails", "~> 6.1"
+  gem "rspec-rails", "~> 7.1"
   gem "factory_bot_rails"
   gem "faker"
 end
