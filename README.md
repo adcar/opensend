@@ -2,6 +2,8 @@
 
 An open-source alternative to Firefox Send. Share files securely with granular permissions.
 
+![OpenSend Screenshot](opensend-screenshot.png)
+
 ## Features
 
 - **Drag & Drop Upload**: Upload files up to 10MB with a beautiful interface
