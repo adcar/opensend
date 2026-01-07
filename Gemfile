@@ -14,7 +14,7 @@ gem "bcrypt", "~> 3.1"
 gem "bootsnap", require: false
 
 # File storage
-gem "aws-sdk-s3", "~> 1.143"  # Vercel Blob uses S3-compatible API
+gem "aws-sdk-s3", "~> 1.210"  # Vercel Blob uses S3-compatible API
 gem "activestorage"
 
 
